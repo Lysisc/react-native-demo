@@ -6,69 +6,184 @@
 
 var React = require('react-native');
 
-var Fetch = require('fetch');
+var SearchPage = require('./sources/SearchPage'); //跳转页面的视图
 
-var MOCKED_MOVIES_DATA = [
-  {
-    title: 'Title',
-    year: '2015',
-    posters: {
-      thumbnail: 'http://i.imgur.com/UePbdph.jpg'
-    }
-  },
-];
+var REQUEST_URL = 'http://platform.sina.com.cn/sports_all/client_api?app_key=3571367214&_sport_t_=football&_sport_s_=opta&_sport_a_=teamOrder&type=213&season=2015&format=json';
 
 var {
+  DatePickerIOS,
   AppRegistry,
+  Image,
+  ListView,
   StyleSheet,
   Text,
-  Image,
   View,
+  StatusBarIOS,
 } = React;
 
-var nativeApp = React.createClass({
+
+var nativeApp = React.createClass({ //启动界面
+
+  _handleLeftButtonPress: function() {
+    console.log(this.refs.nav);
+    StatusBarIOS.setStyle(1, true); //设置状态栏颜色
+    this.refs.nav.pop();
+  },
+
+  _handleRightButtonPress: function() {
+
+    console.log(SearchPage.prototype);
+
+    this.refs.nav.push({
+      title: '新页面',
+      component: SearchPage,
+      backButtonTitle: '返回',
+      rightButtonTitle: '下一步',
+      onRightButtonPress: () => { this._resultsView && this._resultsView._handleRightButtonPress(); },
+      passProps: {
+        passData: '1234',
+        ref: this.onResultsRef,
+      }
+    });
+  },
+
+  onResultsRef: function(resultsViewRef) {
+    this._resultsView = resultsViewRef;
+  },
+
   render: function() {
+
+    StatusBarIOS.setStyle(1, false); //设置状态栏颜色
+
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to Native APP!
-        </Text>
-        <Text style={styles.instructions}>
-          我现在就是写原生native，牛逼啊
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
-        </Text>
-        <Image source={{uri: 'http://img1.cache.netease.com/f2e/news/commend/images/eplove326.jpg'}} style={styles.thumbnail}/>
-      </View>
+      <React.NavigatorIOS
+        style={styles.wrapper}
+        barTintColor='#35a8d4'
+        titleTextColor='#fff'
+        tintColor='#fff'
+        ref='nav'
+        // itemWrapperStyle={styles.wrapper}
+        initialRoute={{
+          title: '日程管理',
+          component: footballPage,
+          // backButtonTitle: 'Custom Back',
+          leftButtonTitle: '切回今天',
+          onLeftButtonPress: this._handleLeftButtonPress,
+          rightButtonTitle: '下一步',
+          onRightButtonPress: this._handleRightButtonPress,
+        }} />
     );
   }
 });
 
-console.log(Fetch);
+var footballPage = React.createClass({ //route下的视图
+
+  getInitialState: function() {
+    return {
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2,
+      }),
+      loaded: false,
+    };
+  },
+
+  componentDidMount: function() {
+    this.fetchData();
+  },
+
+  fetchData: function() {
+    fetch(REQUEST_URL)
+      .then((response) => response.json())
+      .then((responseData) => {
+
+        console.log(responseData.result.data);
+
+        this.setState({
+          dataSource: this.state.dataSource.cloneWithRows(responseData.result.data),
+          loaded: true,
+        });
+      })
+      .done();
+  },
+  
+  render: function() {
+
+    if (!this.state.loaded) {
+      return this.renderLoadingView();
+    }
+
+    return (    
+      <ListView
+        dataSource={this.state.dataSource}
+        renderRow={this.renderTeam}
+        // pageSize={1}
+        style={styles.listView} />
+    );
+  },
+
+  renderLoadingView: function() {
+    return (
+      <View style={styles.loading}>
+        <Text>Loading teams...</Text>
+      </View>
+    );
+  },
+
+  renderTeam: function(team) {
+    return (
+      <View style={styles.container}>
+        <Image
+          source={{uri: team.logo}}
+          style={styles.thumbnail}
+        />
+        <View style={styles.rightContainer}>
+          <Text style={styles.name}>{team.team_cn}</Text>
+          <Text style={styles.rank}>排名: {team.team_order}</Text>
+        </View>
+      </View>
+    );
+  },
+
+});
+
 
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    flexDirection: 'row',
+    backgroundColor: '#F5FCFF',
+    marginBottom: 20,
+  },
+  loading: {
+    flex: 1,
     alignItems: 'center',
-    backgroundColor: '#EEEEEE',
+    justifyContent: 'center'
   },
-  welcome: {
-    fontSize: 26,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+  listView: {
+    padding: 20,
+    backgroundColor: '#F5FCFF',
   },
   thumbnail: {
-    justifyContent: 'center',
-    width: 163,
-    height: 30,
+    width: 42.5,
+    height: 42.5,
+  },
+  rightContainer: {
+    marginLeft: 20,
+  },
+  name: {
+    fontSize: 20,
+    lineHeight: 22,
+    color: 'blue',
+  },
+  rank: {
+    color: 'red',
+  },
+  wrapper: {
+    flex: 1,
+  },
+  button: {
+    backgroundColor: '#eeeeee',
+    padding: 10,
   },
 });
 

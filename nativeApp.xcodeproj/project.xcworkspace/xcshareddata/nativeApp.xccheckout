@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>54036A3D-6B2A-48E2-9CED-05077EDA4FBA</string>
+	<key>IDESourceControlProjectName</key>
+	<string>nativeApp</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>01C0010CADC4ADC7BBC63F2269BEDE9B0D0EE6F5</key>
+		<string>github.com:Lysisc/react-native-demo.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>nativeApp.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>01C0010CADC4ADC7BBC63F2269BEDE9B0D0EE6F5</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>github.com:Lysisc/react-native-demo.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>01C0010CADC4ADC7BBC63F2269BEDE9B0D0EE6F5</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>01C0010CADC4ADC7BBC63F2269BEDE9B0D0EE6F5</string>
+			<key>IDESourceControlWCCName</key>
+			<string>react-native-demo-l</string>
+		</dict>
+	</array>
+</dict>
+</plist>
