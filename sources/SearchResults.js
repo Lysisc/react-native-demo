@@ -1,6 +1,7 @@
 'use strict';
 
 var React = require('react-native');
+
 var {
   StyleSheet,
   Image, 
@@ -11,79 +12,137 @@ var {
   Component
 } = React;
 
-class SearchResults extends Component {
+var REQUEST_URL = 'http://platform.sina.com.cn/sports_all/client_api?app_key=3571367214&_sport_t_=football&_sport_s_=opta&_sport_a_=teamOrder&type=213&season=2015&format=json'; //api
 
-  constructor(props) {
-    super(props);
-    // var dataSource = new ListView.DataSource(
-    //   {rowHasChanged: (r1, r2) => r1.guid !== r2.guid});
-    // this.state = {
-    //   dataSource: dataSource.cloneWithRows(this.props.listings)
-    // };
-  }
+// class SearchResults extends Component {
 
-  renderRow(rowData, sectionID, rowID) {
-    var price = rowData.price_formatted.split(' ')[0];
+var SearchResults = React.createClass({ //route下的视图
 
+  getInitialState: function() {
+    return {
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2,
+      }),
+      loaded: false,
+    };
+  },
+
+  // constructor(props) { //init
+  //   super(props);
+
+  //   this.state = {
+  //     dataSource: new ListView.DataSource({
+  //       rowHasChanged: (row1, row2) => row1 !== row2,
+  //     }),
+  //     loaded: false,
+  //   };
+
+  // }
+
+  componentDidMount: function() { //get data
+    this.fetchData();
+  },
+
+  fetchData: function() { //ajax
+    fetch(REQUEST_URL)
+      .then((response) => response.json())
+      .then((responseData) => {
+
+        // console.log(responseData.result.data);
+
+        this.setState({
+          dataSource: this.state.dataSource.cloneWithRows(responseData.result.data),
+          loaded: true,
+        });
+      })
+      .done();
+  },
+
+  render: function() {
+
+    if (!this.state.loaded) {
+      return this.renderLoadingView();
+    }
+
+    return (    
+      <ListView
+        dataSource={this.state.dataSource}
+        renderRow={this.renderTeam}
+        // pageSize={1}
+        style={styles.listView} />
+    );
+  },
+
+  renderLoadingView: function() { //loading tp
     return (
-      <TouchableHighlight onPress={() => this.rowPressed(rowData.guid)}
-          underlayColor='#dddddd'>
-        <View>
-          <View style={styles.rowContainer}>
-            <Image style={styles.thumb} source={{ uri: rowData.img_url }} />
-            <View  style={styles.textContainer}>
-              <Text style={styles.price}>£{price}</Text>
-              <Text style={styles.title} 
-                    numberOfLines={1}>{rowData.title}</Text>
-            </View>
+      <View style={styles.loading}>
+        <Text>Loading teams...</Text>
+      </View>
+    );
+  },
+
+  renderTeam: function(team) { //item tp
+    return (
+      <TouchableHighlight onPress={() => this.rowPressed(team.team_cn.toString())}
+        underlayColor='#ddd'>
+        <View style={styles.container}>
+          <Image
+            source={{uri: team.logo}}
+            style={styles.thumbnail}
+          />
+          <View style={styles.rightContainer}>
+            <Text style={styles.name}>{team.team_cn}</Text>
+            <Text style={styles.rank}>排名: {team.team_order}</Text>
           </View>
-          <View style={styles.separator}/>
         </View>
       </TouchableHighlight>
     );
+  },
+
+  rowPressed: function(name) { //item event
+    console.log(Navigator.SceneConfigs);
+    // this.props.navigator.popToRoute({
+    //   title: '我回来了',
+    //   component: require('nativeApp/sources/SearchPage.js'),
+    //   passProps: {
+    //     name: name
+    //   }
+    // });
   }
 
-  rowPressed(propertyGuid) {
-    var property = this.props.listings.filter(prop => prop.guid === propertyGuid)[0];
-  }
-
-  render() {
-    return (
-      // <ListView
-      //   dataSource={this.state.dataSource}
-      //   renderRow={this.renderRow.bind(this)}/>
-      <View><Text>12121212</Text></View>
-    );
-  }
-
-}
+// }
+});
 
 var styles = StyleSheet.create({
-  thumb: {
-    width: 80,
-    height: 80,
-    marginRight: 10
-  },
-  textContainer: {
-    flex: 1
-  },
-  separator: {
-    height: 1,
-    backgroundColor: '#dddddd'
-  },
-  price: {
-    fontSize: 25,
-    fontWeight: 'bold',
-    color: '#48BBEC'
-  },
-  title: {
-    fontSize: 20,
-    color: '#656565'
-  },
-  rowContainer: {
+  container: {
+    flex: 1,
     flexDirection: 'row',
-    padding: 10
-  }
+    marginBottom: 20,
+  },
+  loading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  listView: {
+    padding: 20,
+    backgroundColor: '#F5FCFF',
+  },
+  thumbnail: {
+    width: 42.5,
+    height: 42.5,
+  },
+  rightContainer: {
+    marginLeft: 20,
+  },
+  name: {
+    fontSize: 20,
+    lineHeight: 22,
+    color: 'blue',
+  },
+  rank: {
+    color: 'red',
+  },
 });
 
 module.exports = SearchResults;

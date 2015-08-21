@@ -19,6 +19,7 @@ var {
   Text,
   View,
   StatusBarIOS,
+  ScrollView,
 } = React;
 
 
@@ -32,8 +33,6 @@ var nativeApp = React.createClass({ //启动界面
 
   _handleRightButtonPress: function() {
 
-    console.log(SearchPage.prototype);
-
     this.refs.nav.push({
       title: '新页面',
       component: SearchPage,
@@ -45,6 +44,10 @@ var nativeApp = React.createClass({ //启动界面
         ref: this.onResultsRef,
       }
     });
+  },
+
+  onRenderScene: function () {
+    console.log(this.props);
   },
 
   onResultsRef: function(resultsViewRef) {
@@ -65,18 +68,20 @@ var nativeApp = React.createClass({ //启动界面
         // itemWrapperStyle={styles.wrapper}
         initialRoute={{
           title: '日程管理',
-          component: footballPage,
+          component: IndexPage,
           // backButtonTitle: 'Custom Back',
           leftButtonTitle: '切回今天',
           onLeftButtonPress: this._handleLeftButtonPress,
           rightButtonTitle: '下一步',
           onRightButtonPress: this._handleRightButtonPress,
-        }} />
+          passProps: {exampleText: this.props.passProps || '暂无数据'},
+        }}
+        renderScene={this.onRenderScene} />
     );
   }
 });
 
-var footballPage = React.createClass({ //route下的视图
+var IndexPage = React.createClass({ //route下的视图
 
   getInitialState: function() {
     return {
@@ -87,37 +92,36 @@ var footballPage = React.createClass({ //route下的视图
     };
   },
 
-  componentDidMount: function() {
-    this.fetchData();
-  },
+  // componentDidMount: function() {
+  //   this.fetchData();
+  // },
 
-  fetchData: function() {
-    fetch(REQUEST_URL)
-      .then((response) => response.json())
-      .then((responseData) => {
-
-        console.log(responseData.result.data);
-
-        this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(responseData.result.data),
-          loaded: true,
-        });
-      })
-      .done();
-  },
+  // fetchData: function() {
+  //   fetch(REQUEST_URL)
+  //     .then((response) => response.json())
+  //     .then((responseData) => {
+  //       this.setState({
+  //         dataSource: this.state.dataSource.cloneWithRows(responseData.result.data),
+  //         loaded: true,
+  //       });
+  //     })
+  //     .done();
+  // },
   
   render: function() {
 
-    if (!this.state.loaded) {
-      return this.renderLoadingView();
-    }
+    // if (!this.state.loaded) {
+    //   return this.renderLoadingView();
+    // }
 
     return (    
-      <ListView
-        dataSource={this.state.dataSource}
-        renderRow={this.renderTeam}
-        // pageSize={1}
-        style={styles.listView} />
+      // <ListView
+      //   dataSource={this.state.dataSource}
+      //   renderRow={this.renderTeam}
+      //   style={styles.listView} />
+      <ScrollView contentContainerStyle={styles.loading}>
+        <Text style={styles.name}>{this.props.exampleText}</Text>
+      </ScrollView>
     );
   },
 
@@ -129,23 +133,22 @@ var footballPage = React.createClass({ //route下的视图
     );
   },
 
-  renderTeam: function(team) {
-    return (
-      <View style={styles.container}>
-        <Image
-          source={{uri: team.logo}}
-          style={styles.thumbnail}
-        />
-        <View style={styles.rightContainer}>
-          <Text style={styles.name}>{team.team_cn}</Text>
-          <Text style={styles.rank}>排名: {team.team_order}</Text>
-        </View>
-      </View>
-    );
-  },
+  // renderTeam: function(team) {
+  //   return (
+  //     <View style={styles.container}>
+  //       <Image
+  //         source={{uri: team.logo}}
+  //         style={styles.thumbnail}
+  //       />
+  //       <View style={styles.rightContainer}>
+  //         <Text style={styles.name}>{team.team_cn}</Text>
+  //         <Text style={styles.rank}>排名: {team.team_order}</Text>
+  //       </View>
+  //     </View>
+  //   );
+  // },
 
 });
-
 
 var styles = StyleSheet.create({
   container: {
@@ -186,5 +189,7 @@ var styles = StyleSheet.create({
     padding: 10,
   },
 });
+
+module.exports = IndexPage;
 
 AppRegistry.registerComponent('nativeApp', () => nativeApp);

@@ -78,8 +78,8 @@ var SearchPage = React.createClass({ //route下的视图
     this._executeQuery(query);
   },
 
-  onAlertMessage: function() {
-    alert(1);
+  onAlertMessage: function(arg) {
+    alert(arg);
   },
 
   _handleRightButtonPress: function () {
@@ -87,7 +87,10 @@ var SearchPage = React.createClass({ //route下的视图
     this.props.navigator.push({
       title: 'Results',
       component: SearchResults,
-      backButtonTitle: '返回'
+      backButtonTitle: '返回',
+      passProps: {
+        passData: '1234',
+      }
     });
   },
 
@@ -126,7 +129,7 @@ var SearchPage = React.createClass({ //route下的视图
           </TouchableHighlight>
         </View>
         <TouchableHighlight style={styles.button}
-            onPress={this.onAlertMessage}
+            onPress={() => this.onAlertMessage('12121')}
             underlayColor='#99d9f4'>
           <Text style={styles.buttonText}>Location</Text>
         </TouchableHighlight>
