@@ -100,6 +100,7 @@ var SearchResults = React.createClass({ //route下的视图
   },
 
   rowPressed: function(name) { //item event
+    console.log(name);
     console.log(Navigator.SceneConfigs);
     // this.props.navigator.popToRoute({
     //   title: '我回来了',

@@ -1,0 +1,63 @@
+<div class="slide-layout-title">
+	<h1>React Native 分享</h1>
+	<h2>如何优雅的使用javascript来书写原生应用</h2>
+</div>
+<hr>
+<div class="slide-layout-title">
+	<h1>为什么需要 React Native？</h1>
+	<ul>
+		<li>源于脸书的react.js</li>
+		<li>
+			react的机制是神马？<br>
+			<img src="slides/images/1.jpg">
+		</li>
+		<li>Native的原生控件有更好的体验；</li>
+		<li>Native有更好的手势识别；</li>
+		<li>Native有更合适的线程模型，尽管Web Worker可以解决一部分问题，但如图像解码、文本渲染仍无法多线程渲染，这影响了Web的流畅性。</li>
+	</ul>
+</div>
+<hr>
+<div class="slide-layout-title">
+	<h1>如何创建一个React Native项目？</h1>
+	<h2 class="left">需求</h2>
+	<p>OS X – 现在这个仓库只包含 iOS 实现，且 Xcode 只能在 Mac 上运行。<br><br>
+	必须的依赖 node，watchman<br><br>
+	brew install --HEAD watchman。<br>
+	通过配置 watchman，React 实现了在代码发生变化时，完成相关的重建的功能。就像在使用 Xcode 时，每次保存文件都会进行一次创建。<br><br></p>
+	<h2 class="left">快速开始</h2>
+	<p>npm install -g react-native-cli<br>
+	react-native init nativeApp<br>
+	cd进nativeApp后npm start开启服务<br><br>
+	在nativeApp根目录下找到 index.ios.js，然后就可以happy coding了<br>
+	在你的 iOS 模拟器中点击 cmd + R(两次)，可以用来刷新效果<br><br></p>
+</div>
+<hr>
+<div class="slide-layout-title">
+	<h1>运行机制</h1>
+	<ul>
+		<li>
+			入口文件在IOS目录下的AppDelegate.m，我们可以看到如下代码：<br>
+			jsCodeLocation = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle"];<br>
+			它包含了服务端的资源请求地址。
+		</li>
+		<li>
+			index.ios.bundle是怎么来的？作用是神马？<br>
+			项目目录下 node_modules/react-native/local-cli/bundle.js 最终会被用来生成它。<br>
+			index.ios.bundle可以理解为整个app入口文件，它包含了整个项目所有的业务代码。
+		</li>
+	</ul>
+</div>
+<hr>
+<div class="slide-layout-title">
+	<h1>通信机制</h1>
+	<p class="line_center"><img src="slides/images/2.png"><br><br>
+	传送门：<a href="http://blog.cnbang.net/tech/2698/" target="_blank">http://blog.cnbang.net/tech/2698/</a></p>
+</div>
+<hr>
+<div class="slide-layout-title">
+	<h1>Just a Title</h1>
+</div>
+<hr>
+<div class="slide-layout-title">
+	<h1>谢谢</h1>
+</div>
