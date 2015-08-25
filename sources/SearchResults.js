@@ -68,7 +68,7 @@ var SearchResults = React.createClass({ //route下的视图
       <ListView
         dataSource={this.state.dataSource}
         renderRow={this.renderTeam}
-        // pageSize={1}
+        pageSize={10}
         style={styles.listView} />
     );
   },
