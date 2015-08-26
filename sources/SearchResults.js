@@ -43,6 +43,10 @@ var SearchResults = React.createClass({ //route下的视图
     this.fetchData();
   },
 
+  _handleLeftButtonPress: function () {
+    this.props.navigator.pop();
+  },
+
   fetchData: function() { //ajax
     fetch(REQUEST_URL)
       .then((response) => response.json())
@@ -84,10 +88,9 @@ var SearchResults = React.createClass({ //route下的视图
   renderTeam: function(team) { //item tp
     return (
       <TouchableHighlight onPress={() => this.rowPressed(team.team_cn.toString())}
-        underlayColor='#ddd'>
+        underlayColor={'#ddd'}>
         <View style={styles.container}>
-          <Image
-            source={{uri: team.logo}}
+          <Image source={{uri: team.logo}}
             style={styles.thumbnail}
           />
           <View style={styles.rightContainer}>

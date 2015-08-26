@@ -16,8 +16,8 @@ var {
   TouchableHighlight,
   DatePickerIOS,
   AppRegistry,
-  Image,
   StyleSheet,
+  Image,
   Text,
   View,
   StatusBarIOS,
@@ -35,11 +35,13 @@ var nativeApp = React.createClass({ //启动界面
   _handleRightButtonPress: function() {
 
     this.refs.nav.push({
-      title: '新页面',
+      title: '日程管理',
       component: SearchPage,
-      backButtonTitle: '返回',
+      // backButtonTitle: '返回',
+      leftButtonTitle: '切回今天',
+      onLeftButtonPress: () => {this._resultsView && this._resultsView._handleLeftButtonPress()},
       rightButtonTitle: '下一步',
-      onRightButtonPress: () => { this._resultsView && this._resultsView._handleRightButtonPress(); },
+      onRightButtonPress: () => {this._resultsView && this._resultsView._handleRightButtonPress()},
       passProps: {
         passData: '1234',
         ref: this.onResultsRef,
@@ -48,7 +50,7 @@ var nativeApp = React.createClass({ //启动界面
   },
 
   onRenderScene: function () {
-    console.log(this.props);
+    // console.log(this.props);
   },
 
   onResultsRef: function(resultsViewRef) {
@@ -62,23 +64,24 @@ var nativeApp = React.createClass({ //启动界面
     return (
       <React.NavigatorIOS
         style={styles.container}
-        barTintColor='#35a8d4'
-        titleTextColor='#fff'
-        tintColor='#fff'
-        ref='nav'
+        barTintColor={'#35a8d4'}
+        titleTextColor={'#fff'}
+        tintColor={'#fff'}
+        ref={'nav'}
         // itemWrapperStyle={styles.wrapper}
         initialRoute={{
-          title: '日程管理',
+          title: '首页',
           component: IndexPage,
           // backButtonTitle: 'Custom Back',
-          leftButtonTitle: '切回今天',
+          leftButtonTitle: '变',
           onLeftButtonPress: this._handleLeftButtonPress,
-          rightButtonTitle: '下一步',
+          rightButtonTitle: '日程管理',
           onRightButtonPress: this._handleRightButtonPress,
           passProps: {exampleText: this.props.passProps || '暂无数据'},
         }}
         renderScene={this.onRenderScene} />
     );
+
   }
 });
 
@@ -91,13 +94,15 @@ var Slider = React.createClass({
   render: function(){
     return (
       <Swiper style={styles.wrapper} showsButtons={true} autoplay={true} height={80} showsPagination={true}>
-        <Image style={[styles.slide,]} source={{uri: sliderImgs[0]}}></Image>
-        <Image style={[styles.slide,]} source={{uri: sliderImgs[1]}}></Image>
-        <Image style={[styles.slide,]} source={{uri: sliderImgs[2]}}></Image>
+        <Image style={[styles.slide,]} source={{uri:sliderImgs[0]}}></Image>
+        <Image style={[styles.slide,]} source={{uri:sliderImgs[1]}}></Image>
+        <Image style={[styles.slide,]} source={{uri:sliderImgs[2]}}></Image>
       </Swiper>
     );
   }
 });
+
+var clickTimes = 0;
 
 var IndexPage = React.createClass({ //route下的视图
 
@@ -109,13 +114,15 @@ var IndexPage = React.createClass({ //route下的视图
 
   changeState: function() {
     this.setState({
-      loading: 'loading...'
+      loading: 'clicked...' + clickTimes++
     });
   },
   
   render: function() {
     return (
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}
+                  onScroll={() => {console.log('onScroll!')}}
+                  scrollEventThrottle={200}>
 
         <Text style={styles.name}>{this.props.exampleText}</Text>
         <Text style={styles.name}>{this.state.loading}</Text>
@@ -125,7 +132,7 @@ var IndexPage = React.createClass({ //route下的视图
 
 
         <View style={[styles.sbu_red, styles.sbu_view]}>
-          <TouchableHighlight onPress={this.changeState} underlayColor={'#FA6778'} style={{flex:1}}>
+          <TouchableHighlight onPress={this.changeState} underlayColor={'red'} style={{flex:1}}>
             <View style={[styles.sbu_flex, styles.sbu_borderRight]}>
               <View style={[styles.sub_con_flex, styles.sub_text]}>
                 <Text style={[styles.font16]}>酒店</Text>
@@ -151,7 +158,7 @@ var IndexPage = React.createClass({ //route下的视图
         </View>
 
         <View style={[styles.sbu_blue, styles.sbu_view]}>
-          <TouchableHighlight onPress={this.changeState} underlayColor={'#FA6778'} style={{flex:1}}>
+          <TouchableHighlight onPress={this.changeState} underlayColor={'red'} style={{flex:1}}>
             <View style={[styles.sbu_flex, styles.sbu_borderRight]}>
               <View style={[styles.sub_con_flex, styles.sub_text]}>
                 <Text style={[styles.font16]}>酒店</Text>
@@ -177,7 +184,7 @@ var IndexPage = React.createClass({ //route下的视图
         </View>
 
         <View style={[styles.sbu_green, styles.sbu_view]}>
-          <TouchableHighlight onPress={this.changeState} underlayColor={'#FA6778'} style={{flex:1}}>
+          <TouchableHighlight onPress={this.changeState} underlayColor={'red'} style={{flex:1}}>
             <View style={[styles.sbu_flex, styles.sbu_borderRight]}>
               <View style={[styles.sub_con_flex, styles.sub_text]}>
                 <Text style={[styles.font16]}>酒店</Text>
@@ -203,7 +210,7 @@ var IndexPage = React.createClass({ //route下的视图
         </View>
 
         <View style={[styles.sbu_yellow, styles.sbu_view]}>
-          <TouchableHighlight onPress={this.changeState} underlayColor={'#FA6778'} style={{flex:1}}>
+          <TouchableHighlight onPress={this.changeState} underlayColor={'red'} style={{flex:1}}>
             <View style={[styles.sbu_flex, styles.sbu_borderRight]}>
               <View style={[styles.sub_con_flex, styles.sub_text]}>
                 <Text style={[styles.font16]}>酒店</Text>
@@ -238,6 +245,7 @@ var styles = StyleSheet.create({
     flex:1,
   },
   loading: {
+    // border: '1px solid red',
     // flex: 1,
     height: 40,
     backgroundColor:'#F2F2F2',
@@ -331,7 +339,5 @@ var styles = StyleSheet.create({
     resizeMode:Image.resizeMode.contain,
   },
 });
-
-module.exports = IndexPage;
 
 AppRegistry.registerComponent('nativeApp', () => nativeApp);

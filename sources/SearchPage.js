@@ -2,6 +2,8 @@
 
 var React = require('react-native');
 
+var Swiper = require('react-native-swiper'); //轮播图组件
+
 var SearchResults = require('./SearchResults');
 
 var {
@@ -32,6 +34,80 @@ function urlForQueryAndPage(key, value, pageNumber) {
 
   return 'http://api.nestoria.co.uk/api?' + querystring;
 };
+
+var Slider = React.createClass({
+  render: function(){
+    return (
+      <Swiper style={styles.wrapper}
+              showsButtons={true}
+              buttonWrapperStyle={styles.buttonWrapperStyle}
+              nextButton={<Text style={styles.nextButton}>〉</Text>}
+              prevButton={<Text style={styles.prevButton}>〈</Text>}
+              height={80}
+              showsPagination={false}>
+        <View style={styles.dateWrapper}>
+          <TouchableHighlight style={styles.dateView}
+              onPress={this.onSearchPressed}
+              underlayColor={'#fff'}>
+            <View>
+              <Text style={[styles.dateFont14,styles.disable]}>一</Text>
+              <Text style={[styles.dateFont16,styles.disable]}>24</Text>
+            </View>
+          </TouchableHighlight>
+          <TouchableHighlight style={styles.dateView}
+              onPress={this.onSearchPressed}
+              underlayColor={'#fff'}>
+            <View>
+              <Text style={[styles.dateFont14,styles.disable]}>二</Text>
+              <Text style={[styles.dateFont16,styles.disable]}>25</Text>
+            </View>
+          </TouchableHighlight>
+          <TouchableHighlight style={styles.dateView}
+              onPress={this.onSearchPressed}
+              underlayColor={'#fff'}>
+            <View>
+              <Text style={[styles.dateFont14,styles.disable]}>三</Text>
+              <Text style={[styles.dateFont16,styles.disable]}>26</Text>
+            </View>
+          </TouchableHighlight>
+          <TouchableHighlight style={styles.dateView}
+              onPress={this.onSearchPressed}
+              underlayColor={'#fff'}>
+            <View>
+              <Text style={[styles.dateFont14,styles.disable]}>四</Text>
+              <Text style={[styles.dateFont16,styles.disable]}>27</Text>
+            </View>
+          </TouchableHighlight>
+          <TouchableHighlight style={styles.dateView}
+              onPress={this.onSearchPressed}
+              underlayColor={'#fff'}>
+            <View>
+              <Text style={[styles.dateFont14,]}>五</Text>
+              <Text style={[styles.dateFont16,styles.today]}>28</Text>
+            </View>
+          </TouchableHighlight>
+          <TouchableHighlight style={styles.dateView}
+              onPress={this.onSearchPressed}
+              underlayColor={'#fff'}>
+            <View>
+              <Text style={[styles.dateFont14,]}>六</Text>
+              <Text style={[styles.dateFont16,]}>29</Text>
+            </View>
+          </TouchableHighlight>
+          <TouchableHighlight style={styles.dateView}
+              onPress={this.onSearchPressed}
+              underlayColor={'#fff'}>
+            <View>
+              <Text style={[styles.dateFont14,]}>日</Text>
+              <View style={styles.active}></View>
+              <Text style={styles.dateFont16}>30</Text>
+            </View>
+          </TouchableHighlight>
+        </View>
+      </Swiper>
+    );
+  }
+});
 
 var SearchPage = React.createClass({ //route下的视图
 
@@ -78,25 +154,36 @@ var SearchPage = React.createClass({ //route下的视图
     this._executeQuery(query);
   },
 
-  onAlertMessage: function(arg) {
-    alert(arg);
+  onAlertMessage: function() {
+    this.props.navigator.pop();
+  },
+
+  _handleLeftButtonPress: function () {
+    StatusBarIOS.setStyle(1, false);
   },
 
   _handleRightButtonPress: function () {
     // console.log(this.props.navigator);
     this.props.navigator.push({
-      title: 'Results',
+      title: '列表页',
       component: SearchResults,
       backButtonTitle: '返回',
+      // leftButtonTitle: '返回',
+      // onLeftButtonPress: () => {this._resultsView && this._resultsView._handleLeftButtonPress()},
       passProps: {
         passData: '1234',
+        ref: this.onResultsRef,
       }
     });
   },
 
+  onResultsRef: function(resultsViewRef) {
+    this._resultsView = resultsViewRef;
+  },
+
   render: function() {
 
-    StatusBarIOS.setStyle(0, true); //设置状态栏颜色
+    // StatusBarIOS.setStyle(0, true); //设置状态栏颜色
 
     var spinner = this.state.isLoading ?
     ( <View style={styles.loading}>
@@ -109,12 +196,8 @@ var SearchPage = React.createClass({ //route下的视图
 
     return (
       <View style={styles.container}>
-        <Text style={styles.description}>
-          Search for houses to buy!
-        </Text>
-        <Text style={styles.description}>
-          Search by place-name, postcode or search near your location.
-        </Text>
+
+        <Slider/>
 
         <View style={styles.flowRight}>
           <TextInput
@@ -124,14 +207,14 @@ var SearchPage = React.createClass({ //route下的视图
             placeholder='请输入'/>
           <TouchableHighlight style={styles.button}
               onPress={this.onSearchPressed}
-              underlayColor='#99d9f4'>
+              underlayColor={'#99d9f4'}>
             <Text style={styles.buttonText}>Go</Text>
           </TouchableHighlight>
         </View>
         <TouchableHighlight style={styles.button}
-            onPress={() => this.onAlertMessage('12121')}
-            underlayColor='#99d9f4'>
-          <Text style={styles.buttonText}>Location</Text>
+            onPress={this.onAlertMessage}
+            underlayColor={'#99d9f4'}>
+          <Text style={styles.buttonText}>返回上一页</Text>
         </TouchableHighlight>
         <Image source={require('image!house')} style={styles.image} />
         {spinner}
@@ -178,6 +261,59 @@ var styles = StyleSheet.create({
     marginBottom: 10,
     alignSelf: 'stretch',
     justifyContent: 'center'
+  },
+  nextButton: {
+    color: '#ccc',
+    fontSize: 20,
+    left: 13,
+  },
+  prevButton: {
+    color: '#ccc',
+    fontSize: 20,
+    right: 13,
+  },
+  wrapper: {
+    flex: 1,
+    paddingLeft: 12,
+    paddingRight: 12,
+  },
+  dateWrapper: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  dateView: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  disable: {
+    color: '#ccc',
+    borderColor: '#fff',
+  },
+  today: {
+    color: '#0790c7',
+    borderColor: '#0790c7',
+  },
+  active: {
+    color: '#fff',
+    borderColor: '#0790c7',
+    backgroundColor: '#0790c7',
+    width: 32,
+    height: 32,
+    borderWidth: 1,
+    borderRadius: 16,
+  },
+  dateFont14: {
+    fontSize: 14,
+    color: '#333',
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 10,
+  },
+  dateFont16: {
+    fontSize: 16,
+    textAlign: 'center',
+    lineHeight: 24,
+    marginTop: -31,
   },
   searchInput: {
     height: 36,
