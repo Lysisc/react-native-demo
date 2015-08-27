@@ -9,12 +9,15 @@ var SearchResults = require('./SearchResults');
 var {
   StyleSheet,
   Text,
+  Image,
   TextInput,
   View,
   TouchableHighlight,
+  TouchableOpacity,
   ActivityIndicatorIOS,
-  Image,
-  StatusBarIOS
+  StatusBarIOS,
+  ListView,
+  Navigator,
 } = React;
 
 function urlForQueryAndPage(key, value, pageNumber) {
@@ -36,7 +39,82 @@ function urlForQueryAndPage(key, value, pageNumber) {
 };
 
 var Slider = React.createClass({
+
+  getDefaultProps: function() {
+    return {
+      touchId: 1
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2,
+      }),
+    };
+  },
+
+  componentDidMount: function() { //get data
+    var date = [{
+      index: 0,
+      day: 24,
+      weekName: '一',
+      type: 'disable'
+    }, {
+      index: 1,
+      day: 25,
+      weekName: '二',
+      type: 'disable'
+    }, {
+      index: 2,
+      day: 26,
+      weekName: '三',
+      type: 'disable'
+    }, {
+      index: 3,
+      day: 27,
+      weekName: '四',
+      type: 'disable'
+    }, {
+      index: 4,
+      day: 28,
+      weekName: '五',
+      type: 'disable'
+    }, {
+      index: 5,
+      day: 29,
+      isToday: true,
+      weekName: '六',
+      type: 'today'
+    }, {
+      index: 6,
+      day: 30,
+      weekName: '日',
+      type: 'active'
+    }];
+
+    this.setState({
+      dateList: date,
+      dataSource: this.state.dataSource.cloneWithRows(date),
+    });
+
+  },
+
+  // [1,2,3,4].map(i => {
+  //   return (
+  //     <ListView key={i} dataSource={this.state.dataSource}
+  //               renderRow={this._dateList}
+  //               horizontal={true}
+  //               centerContent={true}
+  //               pageSize={7}
+  //               contentContainerStyle={styles.dateWrapper}/>
+  //   )
+  // })
+
   render: function(){
+
+    this.props.getSlider(this);
+
     return (
       <Swiper style={styles.wrapper}
               showsButtons={true}
@@ -45,81 +123,177 @@ var Slider = React.createClass({
               prevButton={<Text style={styles.prevButton}>〈</Text>}
               height={80}
               showsPagination={false}>
-        <View style={styles.dateWrapper}>
-          <TouchableHighlight style={styles.dateView}
-              onPress={this.onSearchPressed}
-              underlayColor={'#fff'}>
-            <View>
-              <Text style={[styles.dateFont14,styles.disable]}>一</Text>
-              <Text style={[styles.dateFont16,styles.disable]}>24</Text>
-            </View>
-          </TouchableHighlight>
-          <TouchableHighlight style={styles.dateView}
-              onPress={this.onSearchPressed}
-              underlayColor={'#fff'}>
-            <View>
-              <Text style={[styles.dateFont14,styles.disable]}>二</Text>
-              <Text style={[styles.dateFont16,styles.disable]}>25</Text>
-            </View>
-          </TouchableHighlight>
-          <TouchableHighlight style={styles.dateView}
-              onPress={this.onSearchPressed}
-              underlayColor={'#fff'}>
-            <View>
-              <Text style={[styles.dateFont14,styles.disable]}>三</Text>
-              <Text style={[styles.dateFont16,styles.disable]}>26</Text>
-            </View>
-          </TouchableHighlight>
-          <TouchableHighlight style={styles.dateView}
-              onPress={this.onSearchPressed}
-              underlayColor={'#fff'}>
-            <View>
-              <Text style={[styles.dateFont14,styles.disable]}>四</Text>
-              <Text style={[styles.dateFont16,styles.disable]}>27</Text>
-            </View>
-          </TouchableHighlight>
-          <TouchableHighlight style={styles.dateView}
-              onPress={this.onSearchPressed}
-              underlayColor={'#fff'}>
-            <View>
-              <Text style={[styles.dateFont14,]}>五</Text>
-              <Text style={[styles.dateFont16,styles.today]}>28</Text>
-            </View>
-          </TouchableHighlight>
-          <TouchableHighlight style={styles.dateView}
-              onPress={this.onSearchPressed}
-              underlayColor={'#fff'}>
-            <View>
-              <Text style={[styles.dateFont14,]}>六</Text>
-              <Text style={[styles.dateFont16,]}>29</Text>
-            </View>
-          </TouchableHighlight>
-          <TouchableHighlight style={styles.dateView}
-              onPress={this.onSearchPressed}
-              underlayColor={'#fff'}>
-            <View>
-              <Text style={[styles.dateFont14,]}>日</Text>
-              <View style={styles.active}></View>
-              <Text style={styles.dateFont16}>30</Text>
-            </View>
-          </TouchableHighlight>
-        </View>
+
+        <ListView dataSource={this.state.dataSource}
+                  renderRow={this._dateList}
+                  horizontal={true}
+                  centerContent={true}
+                  pageSize={7}
+                  contentContainerStyle={styles.dateWrapper}/>
+
+        <ListView dataSource={this.state.dataSource}
+                  renderRow={this._dateList}
+                  horizontal={true}
+                  centerContent={true}
+                  pageSize={7}
+                  contentContainerStyle={styles.dateWrapper}/>
+
+        <ListView dataSource={this.state.dataSource}
+                  renderRow={this._dateList}
+                  horizontal={true}
+                  centerContent={true}
+                  pageSize={7}
+                  contentContainerStyle={styles.dateWrapper}/>
+
+        <ListView dataSource={this.state.dataSource}
+                  renderRow={this._dateList}
+                  horizontal={true}
+                  centerContent={true}
+                  pageSize={7}
+                  contentContainerStyle={styles.dateWrapper}/>
+        
       </Swiper>
     );
-  }
+  },
+
+  _dateList: function(date) {
+    var styleCircle = styles.dateCircle,
+        styleFont14 = styles.dateFont14,
+        styleFont16 = styles.dateFont16;
+
+    switch (date.type) {
+      case 'disable':
+        styleFont14 = [styles.dateFont14, styles.disable];
+        styleFont16 = [styles.dateFont16, styles.disable];
+        break;
+      case 'today':
+        styleCircle = [styles.dateCircle, styles.todayCircle];
+        styleFont16 = [styles.dateFont16, styles.todayFont16];
+        break;
+      case 'todayactive':
+      case 'active':
+        styleCircle = [styles.dateCircle, styles.activeCircle];
+        styleFont16 = [styles.dateFont16, styles.activeFont16];
+        break;
+      default:
+        styleCircle = styles.dateCircle;
+        styleFont14 = styles.dateFont14;
+        styleFont16 = styles.dateFont16;
+    }
+
+    return (
+      <TouchableOpacity onPress={() => this._onDateListPressed(date.index)}
+                        activeOpacity={1}>
+        <View style={styles.dateView}>
+          <Text style={styleFont14}>{date.weekName}</Text>
+          <View style={styleCircle}>
+            <Text style={styleFont16}>{date.day}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  },
+
+  _onDateListPressed: function(index) {
+
+    var thisObj = this.state.dateList[index];
+
+    if (/disable/g.test(thisObj.type)) {
+      return;
+    }
+
+    for (var i = 0; i < this.state.dateList.length; i++) {
+      this.state.dateList[i].type = this.state.dateList[i].type.replace('active', '');
+    }
+
+    if (!/active/g.test(thisObj.type)) {
+      thisObj.type += 'active';
+    }
+
+    this.setState({
+      dateList: this.state.dateList,
+    });
+  },
+
 });
+
+//组件的生命周期
+// componentWillMount：组件创建之前
+// getInitialState：初始化状态
+// render：渲染视图
+// componentDidMount：渲染视图完成后
+// componentWillUnmount：组件被卸载之前
 
 var SearchPage = React.createClass({ //route下的视图
 
-  getInitialState: function() {
+  // porpTypes:{
+  //   username: React.PropTypes.string,
+  //   age: React.propTypes.number,
+  // },
+
+  getDefaultProps: function() {
     return {
-      searchString: 'london',
-      isLoading: false,
-      message: ''
+      getSlider: 123
     };
   },
 
-  onSearchTextChanged: function(event) {
+  getInitialState: function() {
+    var self = this;
+    return {
+      searchString: 'london',
+      isLoading: false,
+      getSlider: (slider) => {
+        self.slider = slider;
+      },
+    };
+  },
+
+  render: function() {
+
+    // StatusBarIOS.setStyle(0, true); //设置状态栏颜色
+
+    var spinner = this.state.isLoading ?
+    ( <View style={styles.loading}>
+        <ActivityIndicatorIOS
+          hidden='true'
+          size='large'/>
+        <Text>加载中...</Text>
+      </View> ) :
+    ( <View/>);
+
+    return (
+      <View style={styles.container}>
+
+        <Slider {...this.state}/>
+
+        <View style={styles.flowRight}>
+          <TextInput
+            style={styles.searchInput}
+            value={this.state.searchString}
+            onChange={this._onSearchTextChanged}
+            placeholder='请输入'/>
+          <TouchableHighlight style={styles.button}
+              onPress={this._onSearchPressed}
+              underlayColor={'#99d9f4'}>
+            <Text style={styles.buttonText}>Go</Text>
+          </TouchableHighlight>
+        </View>
+
+        <TouchableHighlight style={styles.button}
+            onPress={this._onAlertMessage}
+            underlayColor={'#99d9f4'}>
+          <Text style={styles.buttonText}>返回上一页</Text>
+        </TouchableHighlight>
+
+        {spinner}
+
+        <Text style={styles.description}>{this.state.message}</Text>
+
+      </View>
+    );
+  },
+
+  _onSearchTextChanged: function(event) {
     this.setState({
       searchString: event.nativeEvent.text
     });
@@ -149,20 +323,33 @@ var SearchPage = React.createClass({ //route下的视图
     }
   },
 
-  onSearchPressed: function() {
+  _onSearchPressed: function() {
     var query = urlForQueryAndPage('place_name', this.state.searchString, 1);
     this._executeQuery(query);
   },
 
-  onAlertMessage: function() {
+  _onAlertMessage: function() {
     this.props.navigator.pop();
   },
 
-  _handleLeftButtonPress: function () {
-    StatusBarIOS.setStyle(1, false);
+  _handleLeftButtonPress: function() {
+
+    var sliderState = this.slider.state;
+
+    for (var i = 0; i < sliderState.dateList.length; i++) {
+      sliderState.dateList[i].type = sliderState.dateList[i].type.replace('active', '');
+      if (/today/g.test(sliderState.dateList[i].type)) {
+        sliderState.dateList[i].type = 'todayactive';
+      }
+    }
+
+    this.slider.setState({
+      dateList: sliderState.dateList
+    });
+
   },
 
-  _handleRightButtonPress: function () {
+  _handleRightButtonPress: function() {
     // console.log(this.props.navigator);
     this.props.navigator.push({
       title: '列表页',
@@ -172,58 +359,18 @@ var SearchPage = React.createClass({ //route下的视图
       // onLeftButtonPress: () => {this._resultsView && this._resultsView._handleLeftButtonPress()},
       passProps: {
         passData: '1234',
-        ref: this.onResultsRef,
+        ref: this._onResultsRef,
       }
     });
   },
 
-  onResultsRef: function(resultsViewRef) {
+  _onResultsRef: function(resultsViewRef) {
     this._resultsView = resultsViewRef;
-  },
-
-  render: function() {
-
-    // StatusBarIOS.setStyle(0, true); //设置状态栏颜色
-
-    var spinner = this.state.isLoading ?
-    ( <View style={styles.loading}>
-        <ActivityIndicatorIOS
-          hidden='true'
-          size='large'/>
-        <Text>加载中...</Text>
-      </View> ) :
-    ( <View/>);
-
-    return (
-      <View style={styles.container}>
-
-        <Slider/>
-
-        <View style={styles.flowRight}>
-          <TextInput
-            style={styles.searchInput}
-            value={this.state.searchString}
-            onChange={this.onSearchTextChanged}
-            placeholder='请输入'/>
-          <TouchableHighlight style={styles.button}
-              onPress={this.onSearchPressed}
-              underlayColor={'#99d9f4'}>
-            <Text style={styles.buttonText}>Go</Text>
-          </TouchableHighlight>
-        </View>
-        <TouchableHighlight style={styles.button}
-            onPress={this.onAlertMessage}
-            underlayColor={'#99d9f4'}>
-          <Text style={styles.buttonText}>返回上一页</Text>
-        </TouchableHighlight>
-        <Image source={require('image!house')} style={styles.image} />
-        {spinner}
-        <Text style={styles.description}>{this.state.message}</Text>
-      </View>
-    );
   },
   
 });
+
+// <Image source={require('image!house')} style={styles.image} />
 
 var Dimensions = require('Dimensions');
 var { width, height } = Dimensions.get('window');
@@ -273,47 +420,54 @@ var styles = StyleSheet.create({
     right: 13,
   },
   wrapper: {
-    flex: 1,
     paddingLeft: 12,
     paddingRight: 12,
   },
   dateWrapper: {
-    flex: 1,
-    flexDirection: 'row',
+    width: width,
+    paddingRight: 48,
   },
   dateView: {
     flex: 1,
-    flexDirection: 'row',
-  },
-  disable: {
-    color: '#ccc',
-    borderColor: '#fff',
-  },
-  today: {
-    color: '#0790c7',
-    borderColor: '#0790c7',
-  },
-  active: {
-    color: '#fff',
-    borderColor: '#0790c7',
-    backgroundColor: '#0790c7',
-    width: 32,
-    height: 32,
-    borderWidth: 1,
-    borderRadius: 16,
+    alignItems: 'center',
   },
   dateFont14: {
     fontSize: 14,
     color: '#333',
-    textAlign: 'center',
     lineHeight: 20,
     marginBottom: 10,
   },
   dateFont16: {
+    color: '#333',
     fontSize: 16,
     textAlign: 'center',
     lineHeight: 24,
-    marginTop: -31,
+    backgroundColor: 'transparent',
+  },
+  dateCircle: {
+    width: 32,
+    height: 32,
+    borderWidth: 1,
+    borderColor: '#fff',
+    backgroundColor: 'transparent',
+    borderRadius: 16,
+  },
+  todayCircle: {
+    borderColor: '#0790c7',
+    backgroundColor: '#fff',
+  },
+  activeCircle: {
+    borderColor: '#0790c7',
+    backgroundColor: '#0790c7',
+  },
+  disable: {
+    color: '#ccc',
+  },
+  todayFont16: {
+    color: '#0790c7',
+  },
+  activeFont16: {
+    color: '#fff',
   },
   searchInput: {
     height: 36,

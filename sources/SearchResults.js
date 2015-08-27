@@ -9,7 +9,8 @@ var {
   TouchableHighlight,
   ListView,
   Text,
-  Component
+  Component,
+  Navigator
 } = React;
 
 var REQUEST_URL = 'http://platform.sina.com.cn/sports_all/client_api?app_key=3571367214&_sport_t_=football&_sport_s_=opta&_sport_a_=teamOrder&type=213&season=2015&format=json'; //api
@@ -58,6 +59,8 @@ var SearchResults = React.createClass({ //route下的视图
           dataSource: this.state.dataSource.cloneWithRows(responseData.result.data),
           loaded: true,
         });
+      }).catch(error => {
+        alert('网络有问题！');
       })
       .done();
   },
@@ -103,15 +106,18 @@ var SearchResults = React.createClass({ //route下的视图
   },
 
   rowPressed: function(name) { //item event
-    console.log(name);
-    console.log(Navigator.SceneConfigs);
-    // this.props.navigator.popToRoute({
-    //   title: '我回来了',
-    //   component: require('nativeApp/sources/SearchPage.js'),
+    // console.log(require('nativeApp/index.ios.js'));
+    // this.props.navigator.popToTop({
     //   passProps: {
     //     name: name
     //   }
     // });
+    this.props.navigator.popToRoute({
+      component: require('nativeApp/index.ios.js'),
+      passProps: {
+        name: name
+      }
+    });
   }
 
 // }
