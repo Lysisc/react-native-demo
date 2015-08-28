@@ -33,6 +33,12 @@
 </div>
 <hr>
 <div class="slide-layout-title">
+	<h1>通信机制</h1>
+	<p class="line_center"><img src="slides/images/2.png"><br><br>
+	传送门：<a href="http://blog.cnbang.net/tech/2698/" target="_blank">http://blog.cnbang.net/tech/2698/</a></p>
+</div>
+<hr>
+<div class="slide-layout-title">
 	<h1>运行机制</h1>
 	<ul>
 		<li>
@@ -45,35 +51,6 @@
 			项目目录下 node_modules/react-native/local-cli/bundle.js 最终会被用来生成它。<br>
 			index.ios.bundle可以理解为整个app入口文件，它包含了整个项目所有的业务代码。
 		</li>
-	</ul>
-</div>
-<hr>
-<div class="slide-layout-title">
-	<h1>通信机制</h1>
-	<p class="line_center"><img src="slides/images/2.png"><br><br>
-	传送门：<a href="http://blog.cnbang.net/tech/2698/" target="_blank">http://blog.cnbang.net/tech/2698/</a></p>
-</div>
-<hr>
-<div class="slide-layout-title">
-	<h1>常用UI组件&第三方组件</h1>
-	<ul>
-		<li>AppRegistry --应用注册</li>
-		<li>View和Image和Text --视图和图片和文字</li>
-		<li>StyleSheet --样式</li>
-		<li>ScrollView --滚动视图</li>
-		<li>ListView --列表视图</li>
-		<li>TouchableHighlight --高亮触摸</li>
-	</ul>
-	<ul>
-		<li>Swiper --第三方轮播</li>
-	</ul>
-	<h2 class="left">生命周期</h2>
-	<ul>
-		<li>componentWillMount：组件创建之前</li>
-		<li>getInitialState：初始化状态</li>
-		<li>render：渲染视图</li>
-		<li>componentDidMount：渲染视图完成后</li>
-		<li>componentWillUnmount：组件被卸载之前</li>
 	</ul>
 </div>
 <hr>
@@ -111,6 +88,49 @@
 	</ul>
 </div>
 <hr>
+<div class="slide-layout-title">
+	<h1>常用UI组件&第三方组件</h1>
+	<ul>
+		<li>AppRegistry --应用注册</li>
+		<li>View和Image和Text --视图和图片和文字</li>
+		<li>StyleSheet --样式</li>
+		<li>ScrollView --滚动视图</li>
+		<li>ListView --列表视图</li>
+		<li>TouchableHighlight --高亮触摸</li>
+	</ul>
+	<ul>
+		<li>Swiper --第三方轮播</li>
+	</ul>
+	<h2 class="left">生命周期</h2>
+	<ul>
+		<li>componentWillMount：组件创建之前</li>
+		<li>getInitialState：初始化状态</li>
+		<li>render：渲染视图</li>
+		<li>componentDidMount：渲染视图完成后</li>
+		<li>componentWillUnmount：组件被卸载之前</li>
+	</ul>
+</div>
+<hr>
+<div class="slide-layout-title">
+	<h1>props和state</h1>
+	<ul>
+		<li>getDefaultProps最先执行</li>
+		<li>getInitialState只有在组件加载的时候执行</li>
+		<li>props是连接外部组件的桥梁</li>
+		<li>state一般为组件内部的render服务</li>
+	</ul>
+</div>
+<hr>
+<div class="slide-layout-title">
+	<h1>Navigator组件</h1>
+	<ul>
+		<li>初始化路由initialRoute</li>
+		<li>注册ref</li>
+		<li>通过passProps传递对象</li>
+		<li>不同的跳转方式</li>
+		<li>NavigatorIOS有很多坑:(</li>
+	</ul>
+</div>
 <div class="slide-layout-title">
 	<h1>谢谢:)</h1>
 </div>

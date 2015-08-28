@@ -52,7 +52,9 @@ var nativeApp = React.createClass({ //启动界面
           onLeftButtonPress: this._handleLeftButtonPress,
           rightButtonTitle: '日程管理',
           onRightButtonPress: this._handleRightButtonPress,
-          passProps: {exampleText: this.props.passProps || '暂无数据'},
+          passProps: {
+            exampleText: this.props.passProps || '暂无数据'
+          },
         }}
         renderScene={this._onRenderScene}/>
     );
