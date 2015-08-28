@@ -14,6 +14,7 @@ var {
   View,
   TouchableHighlight,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   ActivityIndicatorIOS,
   StatusBarIOS,
   ListView,
@@ -40,6 +41,11 @@ function urlForQueryAndPage(key, value, pageNumber) {
 
 var Slider = React.createClass({
 
+  // porpTypes: {
+  //   username: React.PropTypes.string,
+  //   age: React.propTypes.number,
+  // },
+
   getDefaultProps: function() {
     return {
       touchId: 1
@@ -51,72 +57,98 @@ var Slider = React.createClass({
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
       }),
+      weekList: [],
     };
   },
 
   componentDidMount: function() { //get data
-    var date = [{
-      index: 0,
-      day: 24,
-      weekName: '一',
-      type: 'disable'
-    }, {
-      index: 1,
-      day: 25,
-      weekName: '二',
-      type: 'disable'
-    }, {
-      index: 2,
-      day: 26,
-      weekName: '三',
-      type: 'disable'
-    }, {
-      index: 3,
-      day: 27,
-      weekName: '四',
-      type: 'disable'
-    }, {
-      index: 4,
-      day: 28,
-      weekName: '五',
-      type: 'disable'
-    }, {
-      index: 5,
-      day: 29,
-      isToday: true,
-      weekName: '六',
-      type: 'today'
-    }, {
-      index: 6,
-      day: 30,
-      weekName: '日',
-      type: 'active'
-    }];
+
+    var today = 28,
+      todayIndex = 4,
+      baseDate = [{
+        index: 0,
+        weekName: '一'
+      }, {
+        index: 1,
+        weekName: '二'
+      }, {
+        index: 2,
+        weekName: '三'
+      }, {
+        index: 3,
+        weekName: '四'
+      }, {
+        index: 4,
+        weekName: '五'
+      }, {
+        index: 5,
+        weekName: '六'
+      }, {
+        index: 6,
+        weekName: '日'
+      }],
+
+      buildDate = (n) => {
+
+        var tmpArr = [],
+            fristDay = today + n * 7 - (todayIndex + 1); //拿到每周第一天
+
+        for (var i = 0; i < baseDate.length; i++) {
+
+          fristDay++;
+
+          var tmpDay = fristDay > 31 ? (fristDay - 31) : fristDay,
+            tmpType = () => {
+              if (fristDay > 28) {
+                return '';
+              }
+
+              if (fristDay === 28) {
+                return 'todayactive';
+              }
+
+              if (fristDay < 28) {
+                return 'disable';
+              }
+
+            }();
+
+          var item = {
+            index: baseDate[i].index,
+            weekName: baseDate[i].weekName,
+            day: tmpDay,
+            type: tmpType,
+            weekIndex: n
+          };
+
+          tmpArr.push(item);
+
+        }
+
+      return tmpArr;
+
+      };
 
     this.setState({
-      dateList: date,
-      dataSource: this.state.dataSource.cloneWithRows(date),
+      weekList: [buildDate(0), buildDate(1), buildDate(2), buildDate(3)],
     });
-
-  },
-
-  // [1,2,3,4].map(i => {
-  //   return (
-  //     <ListView key={i} dataSource={this.state.dataSource}
-  //               renderRow={this._dateList}
-  //               horizontal={true}
-  //               centerContent={true}
-  //               pageSize={7}
-  //               contentContainerStyle={styles.dateWrapper}/>
-  //   )
-  // })
-
-  render: function(){
 
     this.props.getSlider(this);
 
+  },
+
+  render: function(){
+
+    var weekList = [],
+        ds = this.state.dataSource;
+
+    if (this.state.weekList.length === 0) {
+      return <View></View>;
+    }
+
     return (
       <Swiper style={styles.wrapper}
+              loop={false}
               showsButtons={true}
               buttonWrapperStyle={styles.buttonWrapperStyle}
               nextButton={<Text style={styles.nextButton}>〉</Text>}
@@ -124,44 +156,46 @@ var Slider = React.createClass({
               height={80}
               showsPagination={false}>
 
-        <ListView dataSource={this.state.dataSource}
-                  renderRow={this._dateList}
-                  horizontal={true}
-                  centerContent={true}
-                  pageSize={7}
-                  contentContainerStyle={styles.dateWrapper}/>
-
-        <ListView dataSource={this.state.dataSource}
-                  renderRow={this._dateList}
-                  horizontal={true}
-                  centerContent={true}
-                  pageSize={7}
-                  contentContainerStyle={styles.dateWrapper}/>
-
-        <ListView dataSource={this.state.dataSource}
-                  renderRow={this._dateList}
-                  horizontal={true}
-                  centerContent={true}
-                  pageSize={7}
-                  contentContainerStyle={styles.dateWrapper}/>
-
-        <ListView dataSource={this.state.dataSource}
+        <ListView dataSource={ds.cloneWithRows(this.state.weekList[0])}
                   renderRow={this._dateList}
                   horizontal={true}
                   centerContent={true}
                   pageSize={7}
                   contentContainerStyle={styles.dateWrapper}/>
         
+        <ListView dataSource={ds.cloneWithRows(this.state.weekList[1])}
+                  renderRow={this._dateList}
+                  horizontal={true}
+                  centerContent={true}
+                  pageSize={7}
+                  contentContainerStyle={styles.dateWrapper}/>
+
+        <ListView dataSource={ds.cloneWithRows(this.state.weekList[2])}
+                  renderRow={this._dateList}
+                  horizontal={true}
+                  centerContent={true}
+                  pageSize={7}
+                  contentContainerStyle={styles.dateWrapper}/>
+
+        <ListView dataSource={ds.cloneWithRows(this.state.weekList[3])}
+                  renderRow={this._dateList}
+                  horizontal={true}
+                  centerContent={true}
+                  pageSize={7}
+                  contentContainerStyle={styles.dateWrapper}/>
+
       </Swiper>
     );
   },
 
-  _dateList: function(date) {
+  _dateList: function(v) {
+
     var styleCircle = styles.dateCircle,
         styleFont14 = styles.dateFont14,
-        styleFont16 = styles.dateFont16;
+        styleFont16 = styles.dateFont16,
+        weekIndex = v.weekIndex;
 
-    switch (date.type) {
+    switch (v.type) {
       case 'disable':
         styleFont14 = [styles.dateFont14, styles.disable];
         styleFont16 = [styles.dateFont16, styles.disable];
@@ -175,44 +209,49 @@ var Slider = React.createClass({
         styleCircle = [styles.dateCircle, styles.activeCircle];
         styleFont16 = [styles.dateFont16, styles.activeFont16];
         break;
-      default:
-        styleCircle = styles.dateCircle;
-        styleFont14 = styles.dateFont14;
-        styleFont16 = styles.dateFont16;
     }
 
     return (
-      <TouchableOpacity onPress={() => this._onDateListPressed(date.index)}
-                        activeOpacity={1}>
+      <TouchableWithoutFeedback onPress={() => this._onDateListPressed(weekIndex, v.index)}>
         <View style={styles.dateView}>
-          <Text style={styleFont14}>{date.weekName}</Text>
+          <Text style={styleFont14}>{v.weekName}</Text>
           <View style={styleCircle}>
-            <Text style={styleFont16}>{date.day}</Text>
+            <Text style={styleFont16}>{v.day}</Text>
           </View>
         </View>
-      </TouchableOpacity>
+      </TouchableWithoutFeedback>
     );
   },
 
-  _onDateListPressed: function(index) {
+  _onDateListPressed: function(weekIndex, index) {
 
-    var thisObj = this.state.dateList[index];
+    var thisDay = this.state.weekList[weekIndex][index];
 
-    if (/disable/g.test(thisObj.type)) {
+    if (/disable/g.test(thisDay.type)) {
       return;
     }
 
-    for (var i = 0; i < this.state.dateList.length; i++) {
-      this.state.dateList[i].type = this.state.dateList[i].type.replace('active', '');
-    }
+    if (/active/g.test(thisDay.type)) {
 
-    if (!/active/g.test(thisObj.type)) {
-      thisObj.type += 'active';
+      thisDay.type.replace('active', '');
+
+    } else {
+
+      for (var i = 0; i < this.state.weekList.length; i++) {
+        var iWeek = this.state.weekList[i];
+        for (var j = 0; j < iWeek.length; j++) {
+          iWeek[j].type = iWeek[j].type.replace('active', '');
+        }
+      }
+
+      thisDay.type += 'active';
+
     }
 
     this.setState({
-      dateList: this.state.dateList,
+      weekList: this.state.weekList,
     });
+
   },
 
 });
@@ -238,13 +277,10 @@ var SearchPage = React.createClass({ //route下的视图
   },
 
   getInitialState: function() {
-    var self = this;
     return {
       searchString: 'london',
       isLoading: false,
-      getSlider: (slider) => {
-        self.slider = slider;
-      },
+      message: ''
     };
   },
 
@@ -261,10 +297,17 @@ var SearchPage = React.createClass({ //route下的视图
       </View> ) :
     ( <View/>);
 
+    var self = this,
+      tools = {
+        getSlider: (slider) => {
+          self.slider = slider;
+        }
+      };
+
     return (
       <View style={styles.container}>
 
-        <Slider {...this.state}/>
+        <Slider {...tools} message={1234}/>
 
         <View style={styles.flowRight}>
           <TextInput
@@ -334,17 +377,20 @@ var SearchPage = React.createClass({ //route下的视图
 
   _handleLeftButtonPress: function() {
 
-    var sliderState = this.slider.state;
+    var weekList = this.slider.state.weekList;
 
-    for (var i = 0; i < sliderState.dateList.length; i++) {
-      sliderState.dateList[i].type = sliderState.dateList[i].type.replace('active', '');
-      if (/today/g.test(sliderState.dateList[i].type)) {
-        sliderState.dateList[i].type = 'todayactive';
+    for (var i = 0; i < weekList.length; i++) {
+      var iWeek = weekList[i];
+      for (var j = 0; j < iWeek.length; j++) {
+        iWeek[j].type = iWeek[j].type.replace('active', '');
+        if (/today/g.test(iWeek[j].type)) {
+          iWeek[j].type = 'todayactive';
+        }
       }
     }
 
     this.slider.setState({
-      dateList: sliderState.dateList
+      dateList: weekList
     });
 
   },

@@ -10,7 +10,8 @@ var {
   ListView,
   Text,
   Component,
-  Navigator
+  Navigator,
+  AlertIOS,
 } = React;
 
 var REQUEST_URL = 'http://platform.sina.com.cn/sports_all/client_api?app_key=3571367214&_sport_t_=football&_sport_s_=opta&_sport_a_=teamOrder&type=213&season=2015&format=json'; //api
@@ -107,17 +108,17 @@ var SearchResults = React.createClass({ //route下的视图
 
   rowPressed: function(name) { //item event
     // console.log(require('nativeApp/index.ios.js'));
-    // this.props.navigator.popToTop({
-    //   passProps: {
-    //     name: name
-    //   }
-    // });
-    this.props.navigator.popToRoute({
-      component: require('nativeApp/index.ios.js'),
-      passProps: {
-        name: name
-      }
-    });
+    // this.props.navigator.popToTop();
+    
+    AlertIOS.alert(
+      '我是标题',
+      '球队：' + name,
+      [
+        {text: 'Foo', onPress: () => console.log('Foo Pressed!')},
+        {text: 'Bar', onPress: () => console.log('Bar Pressed!')},
+      ]
+    );
+
   }
 
 // }
